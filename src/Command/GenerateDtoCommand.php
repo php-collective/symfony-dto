@@ -51,6 +51,14 @@ class GenerateDtoCommand extends Command
         $outputPath = $input->getOption('output-path') ?? $this->projectDir . '/' . $this->outputPath;
         $namespace = $input->getOption('namespace') ?? $this->namespace;
 
+        // Ensure paths end with / for the Finder class
+        if (!str_ends_with($configPath, '/')) {
+            $configPath .= '/';
+        }
+        if (!str_ends_with($outputPath, '/')) {
+            $outputPath .= '/';
+        }
+
         $config = new ArrayConfig([
             'namespace' => $namespace,
             'dryRun' => $input->getOption('dry-run'),
@@ -72,14 +80,42 @@ class GenerateDtoCommand extends Command
 
     private function detectEngine(string $configPath): PhpEngine|XmlEngine|YamlEngine
     {
-        if (file_exists($configPath . '/dto.php')) {
+        $sep = str_ends_with($configPath, '/') ? '' : '/';
+
+        // Check for dtos.* files first (alternative naming)
+        if (file_exists($configPath . $sep . 'dtos.php')) {
             return new PhpEngine();
         }
-        if (file_exists($configPath . '/dto.xml')) {
+        if (file_exists($configPath . $sep . 'dtos.xml')) {
             return new XmlEngine();
         }
-        if (file_exists($configPath . '/dto.yml') || file_exists($configPath . '/dto.yaml')) {
+        if (file_exists($configPath . $sep . 'dtos.yml') || file_exists($configPath . $sep . 'dtos.yaml')) {
             return new YamlEngine();
+        }
+
+        // Standard dto.* naming
+        if (file_exists($configPath . $sep . 'dto.php')) {
+            return new PhpEngine();
+        }
+        if (file_exists($configPath . $sep . 'dto.xml')) {
+            return new XmlEngine();
+        }
+        if (file_exists($configPath . $sep . 'dto.yml') || file_exists($configPath . $sep . 'dto.yaml')) {
+            return new YamlEngine();
+        }
+
+        // Check for dto/ subdirectory
+        if (is_dir($configPath . $sep . 'dto')) {
+            $dtoDir = $configPath . $sep . 'dto/';
+            if (glob($dtoDir . '*.php')) {
+                return new PhpEngine();
+            }
+            if (glob($dtoDir . '*.xml')) {
+                return new XmlEngine();
+            }
+            if (glob($dtoDir . '*.yml') || glob($dtoDir . '*.yaml')) {
+                return new YamlEngine();
+            }
         }
 
         return new XmlEngine();
