@@ -9,9 +9,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class SymfonyConsoleIo implements IoInterface
 {
-    public function __construct(
-        private SymfonyStyle $io,
-    ) {
+    public function __construct(private SymfonyStyle $io)
+    {
     }
 
     /**
