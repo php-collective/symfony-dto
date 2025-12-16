@@ -7,6 +7,7 @@ namespace PhpCollective\SymfonyDto\Test;
 use PhpCollective\SymfonyDto\Command\GenerateDtoCommand;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class GenerateDtoCommandTest extends TestCase
@@ -31,7 +32,7 @@ class GenerateDtoCommandTest extends TestCase
         if (!is_dir($dir)) {
             return;
         }
-        $files = array_diff(scandir($dir), ['.', '..']);
+        $files = array_diff((array)scandir($dir), ['.', '..']);
         foreach ($files as $file) {
             $path = $dir . '/' . $file;
             is_dir($path) ? $this->removeDirectory($path) : unlink($path);
@@ -49,6 +50,25 @@ class GenerateDtoCommandTest extends TestCase
         );
 
         $this->assertSame('dto:generate', $command->getName());
+    }
+
+    public function testCommandFailsWhenNoConfigFound(): void
+    {
+        $command = new GenerateDtoCommand(
+            $this->tempDir,
+            'config',
+            'output',
+            'Test\\Dto',
+        );
+
+        $application = new Application();
+        $application->add($command);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([]);
+
+        $this->assertSame(Command::FAILURE, $commandTester->getStatusCode());
+        $this->assertStringContainsString('No DTO configuration files found', $commandTester->getDisplay());
     }
 
     public function testCommandWithDryRun(): void

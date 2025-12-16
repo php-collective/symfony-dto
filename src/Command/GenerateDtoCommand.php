@@ -38,6 +38,7 @@ class GenerateDtoCommand extends Command
     {
         $this
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Preview changes without writing files')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force regeneration of all DTOs')
             ->addOption('config-path', null, InputOption::VALUE_REQUIRED, 'Path to DTO config files')
             ->addOption('output-path', null, InputOption::VALUE_REQUIRED, 'Path for generated DTOs')
             ->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'Namespace for generated DTOs');
@@ -59,13 +60,34 @@ class GenerateDtoCommand extends Command
             $outputPath .= '/';
         }
 
+        // Validate config path exists
+        if (!is_dir($configPath)) {
+            $io->error("Config path does not exist: {$configPath}");
+
+            return Command::FAILURE;
+        }
+
+        // Check if any config files exist
+        $engine = $this->detectEngine($configPath);
+        if ($engine === null) {
+            $io->error("No DTO configuration files found in: {$configPath}");
+            $io->writeln('');
+            $io->writeln('Expected one of:');
+            $io->writeln('  - dtos.php, dtos.xml, dtos.yml, dtos.yaml');
+            $io->writeln('  - dto.php, dto.xml, dto.yml, dto.yaml');
+            $io->writeln('  - dto/ subdirectory with config files');
+            $io->writeln('');
+            $io->writeln('Run "bin/console dto:init" to create a starter configuration.');
+
+            return Command::FAILURE;
+        }
+
         $config = new ArrayConfig([
             'namespace' => $namespace,
             'dryRun' => $input->getOption('dry-run'),
             'verbose' => $output->isVerbose(),
         ]);
 
-        $engine = $this->detectEngine($configPath);
         $builder = new Builder($engine, $config);
         $renderer = new TwigRenderer(null, $config);
         $consoleIo = new SymfonyConsoleIo($io);
@@ -74,14 +96,19 @@ class GenerateDtoCommand extends Command
         $generator->generate($configPath, $outputPath, [
             'dryRun' => $input->getOption('dry-run'),
             'verbose' => $output->isVerbose(),
+            'force' => $input->getOption('force'),
         ]);
 
-        $io->success('DTOs generated successfully.');
+        if ($input->getOption('dry-run')) {
+            $io->success('Dry run complete. No files were written.');
+        } else {
+            $io->success('DTOs generated successfully.');
+        }
 
         return Command::SUCCESS;
     }
 
-    private function detectEngine(string $configPath): PhpEngine|XmlEngine|YamlEngine
+    private function detectEngine(string $configPath): PhpEngine|XmlEngine|YamlEngine|null
     {
         $sep = str_ends_with($configPath, '/') ? '' : '/';
 
@@ -121,6 +148,6 @@ class GenerateDtoCommand extends Command
             }
         }
 
-        return new XmlEngine();
+        return null;
     }
 }
