@@ -71,7 +71,10 @@ class GenerateDtoCommand extends Command
         $consoleIo = new SymfonyConsoleIo($io);
 
         $generator = new Generator($builder, $renderer, $consoleIo, $config);
-        $generator->generate($configPath, $outputPath);
+        $generator->generate($configPath, $outputPath, [
+            'dryRun' => $input->getOption('dry-run'),
+            'verbose' => $output->isVerbose(),
+        ]);
 
         $io->success('DTOs generated successfully.');
 
