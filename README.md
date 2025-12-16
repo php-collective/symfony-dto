@@ -1,6 +1,6 @@
 # Symfony DTO Bundle
 
-Symfony integration for [php-collective/dto](https://github.com/php-collective/dto).
+Symfony bundle integration for [php-collective/dto](https://github.com/php-collective/dto).
 
 ## Installation
 
@@ -8,7 +8,11 @@ Symfony integration for [php-collective/dto](https://github.com/php-collective/d
 composer require php-collective/symfony-dto
 ```
 
-Register the bundle in `config/bundles.php`:
+The bundle will be auto-configured if you're using Symfony Flex.
+
+### Manual Registration
+
+If not using Flex, add to `config/bundles.php`:
 
 ```php
 return [
@@ -23,9 +27,9 @@ Create `config/packages/php_collective_dto.yaml`:
 
 ```yaml
 php_collective_dto:
-    config_path: 'config/'      # Where DTO config files are located
-    output_path: 'src/'         # Where to generate DTOs
-    namespace: 'App'            # Namespace for generated DTOs
+    config_path: config          # Path to DTO config files (relative to project root)
+    output_path: src/Dto         # Path for generated DTOs
+    namespace: App\Dto           # Namespace for generated DTOs
 ```
 
 ## Usage
@@ -62,20 +66,13 @@ Options:
 
 ```php
 use App\Dto\UserDto;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
-class UserController
-{
-    public function create(): JsonResponse
-    {
-        $user = new UserDto();
-        $user->setId(1);
-        $user->setName('John Doe');
-        $user->setEmail('john@example.com');
+$user = new UserDto();
+$user->setId(1);
+$user->setName('John Doe');
+$user->setEmail('john@example.com');
 
-        return new JsonResponse($user->toArray());
-    }
-}
+return $this->json($user->toArray());
 ```
 
 Or create from an array:
@@ -92,9 +89,9 @@ $user = UserDto::createFromArray([
 
 The bundle supports multiple config file formats:
 
-- `dto.xml` or `dtos.xml` - XML format
-- `dto.yml` / `dto.yaml` or `dtos.yml` / `dtos.yaml` - YAML format
-- `dto.php` or `dtos.php` - PHP format
+- `dto.xml` - XML format
+- `dto.yml` / `dto.yaml` - YAML format
+- `dto.php` - PHP format
 - `dto/` subdirectory with multiple files
 
 ## License
