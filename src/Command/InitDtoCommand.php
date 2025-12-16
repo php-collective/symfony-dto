@@ -80,7 +80,7 @@ class InitDtoCommand extends Command
         return match ($format) {
             'php' => $this->getPhpConfig(),
             'xml' => $this->getXmlConfig(),
-            'yaml' => $this->getYamlConfig(),
+            default => $this->getYamlConfig(),
         };
     }
 
