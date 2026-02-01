@@ -152,7 +152,14 @@ parameters:
         - src/Dto/
 ```
 
-Alternatively, you can avoid exclusions altogether by generating DTOs into a separate directory outside `src/` (e.g. `generated/`). This requires a custom PSR-4 autoload entry in your `composer.json`:
+Alternatively, you can avoid exclusions altogether by generating DTOs into a separate directory outside `src/` (e.g. `generated/`). Update your bundle config:
+
+```yaml
+php_collective_dto:
+    output_path: generated/
+```
+
+Then add a PSR-4 autoload entry in your `composer.json`:
 
 ```json
 {
