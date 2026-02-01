@@ -26,6 +26,15 @@ class InitDtoCommandTest extends TestCase
         $this->removeDirectory($this->tempDir);
     }
 
+    protected function addCommandToApplication(Application $application, Command $command): void
+    {
+        if (method_exists($application, 'addCommand')) {
+            $application->addCommand($command);
+        } else {
+            $application->add($command);
+        }
+    }
+
     protected function removeDirectory(string $dir): void
     {
         if (!is_dir($dir)) {
@@ -51,7 +60,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -69,7 +78,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--format' => 'xml']);
@@ -87,7 +96,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--format' => 'yaml']);
@@ -107,7 +116,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -123,7 +132,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--force' => true]);
@@ -139,7 +148,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--format' => 'invalid']);

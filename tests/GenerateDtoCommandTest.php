@@ -27,6 +27,15 @@ class GenerateDtoCommandTest extends TestCase
         $this->removeDirectory($this->tempDir);
     }
 
+    protected function addCommandToApplication(Application $application, Command $command): void
+    {
+        if (method_exists($application, 'addCommand')) {
+            $application->addCommand($command);
+        } else {
+            $application->add($command);
+        }
+    }
+
     protected function removeDirectory(string $dir): void
     {
         if (!is_dir($dir)) {
@@ -62,7 +71,7 @@ class GenerateDtoCommandTest extends TestCase
         );
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -92,7 +101,7 @@ XML;
         );
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--dry-run' => true]);
@@ -124,7 +133,7 @@ XML;
         );
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -157,7 +166,7 @@ XML;
         );
 
         $application = new Application();
-        $application->addCommand($command);
+        $this->addCommandToApplication($application, $command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
