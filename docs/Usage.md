@@ -49,33 +49,50 @@ public function show(User $user): JsonResponse
 }
 ```
 
-## Collection Factory
+## Collections
 
-Configure collection factory in a kernel listener or service:
+The `PhpCollectiveDtoBundle` automatically registers Doctrine's `ArrayCollection` as the collection type for DTO collection fields. No manual setup is needed.
+
+### Defining Collection Fields
+
+In your DTO config, use the `[]` suffix to define collection fields:
+
+```xml
+<dto name="User">
+    <field name="id" type="int"/>
+    <field name="name" type="string"/>
+    <field name="roles" type="Role[]"/>
+    <field name="tags" type="string[]"/>
+</dto>
+```
+
+After generating, collection fields will use Doctrine's `ArrayCollection` class:
 
 ```php
-// src/EventListener/DtoListener.php
-use Doctrine\Common\Collections\ArrayCollection;
-use PhpCollective\Dto\Dto\Dto;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
+$user = new UserDto([
+    'id' => 1,
+    'name' => 'John',
+    'roles' => [
+        ['name' => 'admin', 'active' => true],
+        ['name' => 'editor', 'active' => false],
+    ],
+    'tags' => ['vip', 'premium'],
+]);
 
-class DtoListener
-{
-    public function onKernelRequest(RequestEvent $event): void
-    {
-        Dto::setCollectionFactory(fn (array $items) => new ArrayCollection($items));
-    }
-}
+// Doctrine Collection methods are available
+$activeRoles = $user->getRoles()->filter(fn (RoleDto $role) => $role->getActive());
+$firstRole = $user->getRoles()->first();
+$tagCount = $user->getTags()->count();
 ```
 
-Register in `services.yaml`:
+### What the Adapter Does
 
-```yaml
-services:
-    App\EventListener\DtoListener:
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, priority: 100 }
-```
+The bundle performs two registrations on boot:
+
+1. **Runtime collection factory** — `Dto::setCollectionFactory(fn (array $items) => new ArrayCollection($items))` ensures that collection fields are hydrated as `Doctrine\Common\Collections\ArrayCollection` instances at runtime.
+2. **Code generation adapter** — `CollectionAdapterRegistry::register(new DoctrineCollectionAdapter())` ensures that generated DTO code uses `new ArrayCollection([])` and `->add()` for collection initialization and appending.
+
+Both are required: the factory handles runtime hydration from arrays, while the adapter controls the generated PHP code.
 
 ## Validation
 

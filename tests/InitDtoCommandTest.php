@@ -51,7 +51,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -69,7 +69,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--format' => 'xml']);
@@ -87,7 +87,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--format' => 'yaml']);
@@ -107,7 +107,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -123,7 +123,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--force' => true]);
@@ -139,7 +139,7 @@ class InitDtoCommandTest extends TestCase
         $command = new InitDtoCommand($this->tempDir, 'config');
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--format' => 'invalid']);

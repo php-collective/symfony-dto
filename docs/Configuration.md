@@ -13,6 +13,30 @@ php_collective_dto:
 
 ## DTO Definition Formats
 
+### PHP Format (default)
+
+Create `config/dtos.php`.
+This is the default format when running `bin/console dto:init`:
+
+```php
+use PhpCollective\Dto\Builder\Dto;
+use PhpCollective\Dto\Builder\Field;
+use PhpCollective\Dto\Builder\Schema;
+
+return Schema::create()
+    ->dto(Dto::create('User')->fields(
+        Field::int('id'),
+        Field::string('name'),
+        Field::string('email')->nullable(),
+        Field::array('roles', 'Role'),
+    ))
+    ->dto(Dto::create('Role')->fields(
+        Field::int('id'),
+        Field::string('name'),
+    ))
+    ->toArray();
+```
+
 ### XML Format
 
 Create `config/dto.xml`:
@@ -50,29 +74,6 @@ Role:
   fields:
     id: int
     name: string
-```
-
-### PHP Format
-
-Create `config/dto.php`:
-
-```php
-use PhpCollective\Dto\Builder\Dto;
-use PhpCollective\Dto\Builder\Field;
-use PhpCollective\Dto\Builder\Schema;
-
-return Schema::create()
-    ->dto(Dto::create('User')->fields(
-        Field::int('id'),
-        Field::string('name'),
-        Field::string('email')->nullable(),
-        Field::array('roles', 'Role'),
-    ))
-    ->dto(Dto::create('Role')->fields(
-        Field::int('id'),
-        Field::string('name'),
-    ))
-    ->toArray();
 ```
 
 ## Command Options

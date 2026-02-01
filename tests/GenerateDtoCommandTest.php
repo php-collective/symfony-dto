@@ -62,7 +62,7 @@ class GenerateDtoCommandTest extends TestCase
         );
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -92,7 +92,7 @@ XML;
         );
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--dry-run' => true]);
@@ -124,7 +124,7 @@ XML;
         );
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -157,7 +157,7 @@ XML;
         );
 
         $application = new Application();
-        $application->add($command);
+        $application->addCommand($command);
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([

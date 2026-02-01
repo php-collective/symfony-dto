@@ -34,19 +34,29 @@ php_collective_dto:
 
 ## Usage
 
-### 1. Create your DTO configuration
+### 1. Initialize DTO configuration
 
-Create `config/dto.xml`:
+```bash
+bin/console dto:init
+```
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<dtos xmlns="php-collective-dto">
-    <dto name="User">
-        <field name="id" type="int"/>
-        <field name="name" type="string"/>
-        <field name="email" type="string"/>
-    </dto>
-</dtos>
+This creates a `config/dtos.php` file with a sample DTO definition (PHP format is the default).
+You can also use `--format=xml` or `--format=yaml`.
+
+The generated config looks like:
+
+```php
+use PhpCollective\Dto\Builder\Dto;
+use PhpCollective\Dto\Builder\Field;
+use PhpCollective\Dto\Builder\Schema;
+
+return Schema::create()
+    ->dto(Dto::create('User')->fields(
+        Field::int('id'),
+        Field::string('name'),
+        Field::string('email')->nullable(),
+    ))
+    ->toArray();
 ```
 
 ### 2. Generate DTOs
@@ -67,31 +77,33 @@ Options:
 ```php
 use App\Dto\UserDto;
 
-$user = new UserDto();
-$user->setId(1);
-$user->setName('John Doe');
-$user->setEmail('john@example.com');
-
-return $this->json($user->toArray());
-```
-
-Or create from an array:
-
-```php
-$user = UserDto::createFromArray([
+$user = new UserDto([
     'id' => 1,
     'name' => 'John Doe',
     'email' => 'john@example.com',
 ]);
+
+return $this->json($user->toArray());
 ```
+
+## Collections
+
+The bundle automatically registers Doctrine's `ArrayCollection` for DTO collection fields. Define collection fields with the `[]` suffix:
+
+```php
+Field::array('roles', 'Role'),  // Role[] collection
+Field::array('tags', 'string'), // string[] collection
+```
+
+After generating, collection fields use Doctrine's `ArrayCollection` class with its methods (`filter`, `map`, `first`, etc.).
 
 ## Supported Config Formats
 
 The bundle supports multiple config file formats:
 
+- `dtos.php` - PHP format (default)
 - `dto.xml` - XML format
 - `dto.yml` / `dto.yaml` - YAML format
-- `dto.php` - PHP format
 - `dto/` subdirectory with multiple files
 
 ## License
