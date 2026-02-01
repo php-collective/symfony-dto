@@ -6,8 +6,8 @@ Create `config/packages/php_collective_dto.yaml`:
 
 ```yaml
 php_collective_dto:
-    config_path: config          # Path to DTO config files (relative to project root)
-    output_path: src/Dto         # Path for generated DTOs
+    config_path: config/          # Path to DTO config files (relative to project root)
+    output_path: src/Dto/        # Path for generated DTOs
     namespace: App\Dto           # Namespace for generated DTOs
 ```
 
@@ -125,7 +125,7 @@ Update bundle config:
 
 ```yaml
 php_collective_dto:
-    config_path: config/dto
+    config_path: config/dto/
 ```
 
 ## Further Reading
