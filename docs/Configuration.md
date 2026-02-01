@@ -128,6 +128,43 @@ php_collective_dto:
     config_path: config/dto/
 ```
 
+## Exclude Generated DTOs from Static Analysis
+
+Generated code usually shouldn't run through code-style or static analysis checks.
+
+### PHP_CodeSniffer
+
+Add an exclude pattern to your `phpcs.xml`:
+
+```xml
+<rule ref="...">
+    <exclude-pattern>src/Dto/*</exclude-pattern>
+</rule>
+```
+
+### PHPStan
+
+Add an exclude path to your `phpstan.neon`:
+
+```yaml
+parameters:
+    excludePaths:
+        - src/Dto/
+```
+
+## Composer Scripts
+
+You can add convenience scripts to your `composer.json`:
+
+```json
+{
+    "scripts": {
+        "dto:generate": "bin/console dto:generate",
+        "dto:check": "bin/console dto:generate --dry-run"
+    }
+}
+```
+
 ## Further Reading
 
 See the main [php-collective/dto documentation](https://github.com/php-collective/dto) for complete configuration options.
