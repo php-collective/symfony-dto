@@ -27,6 +27,18 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('App\\Dto')
                     ->info('Namespace for generated DTO classes')
                 ->end()
+                ->scalarNode('typescript_output_path')
+                    ->defaultValue('assets/types')
+                    ->info('Path for generated TypeScript interfaces (relative to project root)')
+                ->end()
+                ->scalarNode('jsonschema_output_path')
+                    ->defaultValue('config/schemas')
+                    ->info('Path for generated JSON Schema files (relative to project root)')
+                ->end()
+                ->booleanNode('enable_value_resolver')
+                    ->defaultTrue()
+                    ->info('Enable automatic DTO value resolver for controller arguments')
+                ->end()
             ->end();
 
         return $treeBuilder;
