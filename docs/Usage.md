@@ -32,6 +32,31 @@ class UserController extends AbstractController
 }
 ```
 
+### Automatic DTO Resolution
+
+Enable the value resolver in config (`enable_value_resolver: true`) and use `#[MapRequestDto]`:
+
+```php
+use App\Dto\UserDto;
+use PhpCollective\SymfonyDto\Attribute\MapRequestDto;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+class UserController extends AbstractController
+{
+    #[Route('/users', methods: ['POST'])]
+    public function store(#[MapRequestDto] UserDto $dto): JsonResponse
+    {
+        return $this->json($dto->toArray());
+    }
+}
+```
+
+Choose a specific source if needed:
+
+```php
+#[MapRequestDto(source: MapRequestDto::SOURCE_QUERY)]
+```
+
 ### From Doctrine Entities
 
 ```php

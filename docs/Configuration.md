@@ -9,6 +9,9 @@ php_collective_dto:
     config_path: config/          # Path to DTO config files (relative to project root)
     output_path: src/Dto/        # Path for generated DTOs
     namespace: App\Dto           # Namespace for generated DTOs
+    typescript_output_path: assets/types  # TypeScript output
+    jsonschema_output_path: config/schemas  # JSON Schema output
+    enable_value_resolver: true  # Enable controller DTO auto-resolution
 ```
 
 ## DTO Definition Formats
@@ -92,6 +95,13 @@ bin/console dto:generate -v
 
 # Combine options
 bin/console dto:generate --dry-run -v
+```
+
+The `dto:typescript` and `dto:jsonschema` commands support:
+
+```bash
+bin/console dto:typescript --multiple-files --readonly
+bin/console dto:jsonschema --multiple-files
 ```
 
 ## Directory Structure

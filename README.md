@@ -30,6 +30,9 @@ php_collective_dto:
     config_path: config/          # Path to DTO config files (relative to project root)
     output_path: src/Dto/        # Path for generated DTOs
     namespace: App\Dto           # Namespace for generated DTOs
+    typescript_output_path: assets/types  # TypeScript output
+    jsonschema_output_path: config/schemas  # JSON Schema output
+    enable_value_resolver: true  # Enable controller DTO auto-resolution
 ```
 
 ## Usage
@@ -72,7 +75,21 @@ Options:
 - `--namespace` - Override namespace
 - `-v` - Verbose output
 
-### 3. Use your DTOs
+### 3. Generate TypeScript interfaces
+
+```bash
+bin/console dto:typescript
+bin/console dto:typescript --multiple-files --readonly
+```
+
+### 4. Generate JSON Schema
+
+```bash
+bin/console dto:jsonschema
+bin/console dto:jsonschema --multiple-files
+```
+
+### 5. Use your DTOs
 
 ```php
 use App\Dto\UserDto;
@@ -85,6 +102,22 @@ $user = new UserDto([
 
 return $this->json($user->toArray());
 ```
+
+## Controller DTO Resolution
+
+When `enable_value_resolver` is enabled, you can use `#[MapRequestDto]` to map request data to DTOs:
+
+```php
+use PhpCollective\SymfonyDto\Attribute\MapRequestDto;
+
+#[Route('/users', methods: ['POST'])]
+public function create(#[MapRequestDto] UserDto $dto): Response
+{
+    // $dto is built from request data
+}
+```
+
+The `source` option controls where data comes from: `body`, `query`, `request`, or `auto`.
 
 ## Collections
 
