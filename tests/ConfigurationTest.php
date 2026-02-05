@@ -20,6 +20,9 @@ class ConfigurationTest extends TestCase
         $this->assertSame('config', $config['config_path']);
         $this->assertSame('src/Dto', $config['output_path']);
         $this->assertSame('App\\Dto', $config['namespace']);
+        $this->assertSame('assets/types', $config['typescript_output_path']);
+        $this->assertSame('config/schemas', $config['jsonschema_output_path']);
+        $this->assertTrue($config['enable_value_resolver']);
     }
 
     public function testCustomConfiguration(): void
@@ -32,11 +35,17 @@ class ConfigurationTest extends TestCase
                 'config_path' => 'custom/config',
                 'output_path' => 'custom/output',
                 'namespace' => 'Custom\\Namespace',
+                'typescript_output_path' => 'assets/types',
+                'jsonschema_output_path' => 'config/schemas',
+                'enable_value_resolver' => false,
             ],
         ]);
 
         $this->assertSame('custom/config', $config['config_path']);
         $this->assertSame('custom/output', $config['output_path']);
         $this->assertSame('Custom\\Namespace', $config['namespace']);
+        $this->assertSame('assets/types', $config['typescript_output_path']);
+        $this->assertSame('config/schemas', $config['jsonschema_output_path']);
+        $this->assertFalse($config['enable_value_resolver']);
     }
 }
