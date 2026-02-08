@@ -20,14 +20,11 @@
         "php-collective/code-sniffer": "dev-master",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^10.0|^11.0|^12.0",
-        "symfony/validator": "^8.0",
+        "symfony/validator": "^7.0",
         "symfony/yaml": "^7.0|^8.0"
     },
     "suggest": {
-        "symfony/validator": "Required for the DtoConstraintBuilder validation bridge"
-    },
-    "suggest": {
-        "symfony/validator": "Required for DtoConstraintBuilder validation bridge"
+        "symfony/validator": "Required for the DtoConstraintBuilder validation bridge (^7.0|^8.0)"
     },
     "autoload": {
         "psr-4": {
