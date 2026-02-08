@@ -136,7 +136,7 @@ class UserController extends AbstractController
         $dto = new UserDto($data);
 
         $violations = $validator->validate($dto->toArray(), new Assert\Collection([
-            'name' => [new Assert\NotBlank(), new Assert\Length(['max' => 255])],
+            'name' => [new Assert\NotBlank(), new Assert\Length(max: 255)],
             'email' => [new Assert\NotBlank(), new Assert\Email()],
         ]));
 
@@ -152,6 +152,41 @@ class UserController extends AbstractController
     }
 }
 ```
+
+### Validation Bridge
+
+If your DTOs use the built-in validation rules from `php-collective/dto` (e.g. `required`, `minLength`, `maxLength`, `min`, `max`, `pattern`), you can automatically convert them to Symfony Validator constraints:
+
+```php
+composer require symfony/validator
+```
+
+```php
+use PhpCollective\SymfonyDto\Validation\DtoConstraintBuilder;
+use Symfony\Component\Validator\Validation;
+
+$dto = new UserDto();
+$constraint = DtoConstraintBuilder::fromDto($dto);
+
+$validator = Validation::createValidator();
+$violations = $validator->validate($data, $constraint);
+
+if (count($violations) > 0) {
+    // Handle validation errors
+}
+```
+
+The bridge maps DTO rules to Symfony constraints:
+
+| DTO Rule | Symfony Constraint |
+|---|---|
+| `required` | `Assert\NotBlank` (wrapped in `Assert\Required`) |
+| `minLength` / `maxLength` | `Assert\Length(min:, max:)` |
+| `min` / `max` | `Assert\Range(min:, max:)` |
+| `pattern` | `Assert\Regex(pattern:)` |
+
+Optional fields are wrapped in `Assert\Optional`, required fields in `Assert\Required`.
+Extra fields not defined in the DTO are allowed by default.
 
 ## Service Layer Pattern
 
