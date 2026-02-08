@@ -25,27 +25,19 @@ class DtoConstraintBuilder
                 $constraints[] = new Assert\NotBlank();
             }
             if (isset($rules['minLength']) || isset($rules['maxLength'])) {
-                $lengthOptions = [];
-                if (isset($rules['minLength'])) {
-                    $lengthOptions['min'] = $rules['minLength'];
-                }
-                if (isset($rules['maxLength'])) {
-                    $lengthOptions['max'] = $rules['maxLength'];
-                }
-                $constraints[] = new Assert\Length($lengthOptions);
+                $constraints[] = new Assert\Length(
+                    min: $rules['minLength'] ?? null,
+                    max: $rules['maxLength'] ?? null,
+                );
             }
             if (isset($rules['min']) || isset($rules['max'])) {
-                $rangeOptions = [];
-                if (isset($rules['min'])) {
-                    $rangeOptions['min'] = $rules['min'];
-                }
-                if (isset($rules['max'])) {
-                    $rangeOptions['max'] = $rules['max'];
-                }
-                $constraints[] = new Assert\Range($rangeOptions);
+                $constraints[] = new Assert\Range(
+                    min: $rules['min'] ?? null,
+                    max: $rules['max'] ?? null,
+                );
             }
             if (isset($rules['pattern'])) {
-                $constraints[] = new Assert\Regex(['pattern' => $rules['pattern']]);
+                $constraints[] = new Assert\Regex(pattern: $rules['pattern']);
             }
 
             if ($constraints) {
@@ -57,6 +49,6 @@ class DtoConstraintBuilder
             }
         }
 
-        return new Assert\Collection(['fields' => $fields, 'allowExtraFields' => true]);
+        return new Assert\Collection(fields: $fields, allowExtraFields: true);
     }
 }

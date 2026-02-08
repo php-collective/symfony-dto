@@ -114,6 +114,40 @@ class ValidationTestDto extends AbstractDto
     ];
 
     /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function validationRules(): array
+    {
+        $rules = [];
+        foreach ($this->_metadata as $field => $meta) {
+            $rule = [];
+            if ($meta['required']) {
+                $rule['required'] = true;
+            }
+            if ($meta['minLength'] !== null) {
+                $rule['minLength'] = $meta['minLength'];
+            }
+            if ($meta['maxLength'] !== null) {
+                $rule['maxLength'] = $meta['maxLength'];
+            }
+            if ($meta['min'] !== null) {
+                $rule['min'] = $meta['min'];
+            }
+            if ($meta['max'] !== null) {
+                $rule['max'] = $meta['max'];
+            }
+            if ($meta['pattern'] !== null) {
+                $rule['pattern'] = $meta['pattern'];
+            }
+            if ($rule) {
+                $rules[$field] = $rule;
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
      * @param array<string, mixed> $data
      * @param bool $ignoreMissing
      * @param string|null $type

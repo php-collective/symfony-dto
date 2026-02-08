@@ -153,7 +153,7 @@ class UserController extends AbstractController
 }
 ```
 
-### Validation Bridge
+## Validation Bridge
 
 If your DTOs use the built-in validation rules from `php-collective/dto` (e.g. `required`, `minLength`, `maxLength`, `min`, `max`, `pattern`), you can automatically convert them to Symfony Validator constraints:
 

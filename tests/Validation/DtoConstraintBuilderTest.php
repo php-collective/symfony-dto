@@ -134,4 +134,37 @@ class DtoConstraintBuilderTest extends TestCase
         $violations = $validator->validate(['name' => 'John', 'extra' => 'field'], $constraint);
         $this->assertCount(0, $violations);
     }
+
+    public function testEmptyRulesProducesEmptyCollection(): void
+    {
+        $dto = new class extends ValidationTestDto {
+            /**
+             * @return array<string, array<string, mixed>>
+             */
+            public function validationRules(): array
+            {
+                return [];
+            }
+        };
+
+        $collection = DtoConstraintBuilder::fromDto($dto);
+
+        $this->assertEmpty($collection->fields);
+        $this->assertTrue($collection->allowExtraFields);
+    }
+
+    public function testCombinedMinLengthMaxLengthMergedIntoSingleLengthConstraint(): void
+    {
+        $dto = new ValidationTestDto();
+        $constraint = DtoConstraintBuilder::fromDto($dto);
+
+        $lengthConstraints = array_values(array_filter(
+            $constraint->fields['name']->constraints,
+            fn ($c) => $c instanceof Assert\Length,
+        ));
+
+        $this->assertCount(1, $lengthConstraints);
+        $this->assertSame(2, $lengthConstraints[0]->min);
+        $this->assertSame(50, $lengthConstraints[0]->max);
+    }
 }
