@@ -103,6 +103,37 @@ $user = new UserDto([
 return $this->json($user->toArray());
 ```
 
+## DTO Mapping Helpers
+
+```php
+use App\Dto\UserDto;
+use PhpCollective\SymfonyDto\Mapper\DtoMapper;
+
+$dto = DtoMapper::fromArray(['name' => 'Mark'], UserDto::class);
+
+$dtos = DtoMapper::fromIterable($rows, UserDto::class);
+$collection = DtoMapper::fromCollection($doctrineCollection, UserDto::class);
+
+// Generic pagination wrapper
+$pagination = DtoMapper::fromPaginated(
+    items: $pageItems,
+    total: $total,
+    perPage: $perPage,
+    page: $page,
+    dtoClass: UserDto::class,
+);
+```
+
+## JSON Response Helper
+
+```php
+use PhpCollective\SymfonyDto\Http\DtoJsonResponse;
+
+return DtoJsonResponse::fromDto($dto);
+// or
+return DtoJsonResponse::fromCollection($dtos);
+```
+
 ## Controller DTO Resolution
 
 When `enable_value_resolver` is enabled, you can use `#[MapRequestDto]` to map request data to DTOs:
