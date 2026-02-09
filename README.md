@@ -130,6 +130,20 @@ Field::array('tags', 'string'), // string[] collection
 
 After generating, collection fields use Doctrine's `ArrayCollection` class with its methods (`filter`, `map`, `first`, etc.).
 
+## Validation Bridge
+
+Automatically convert DTO validation rules to Symfony Validator constraints:
+
+```php
+use PhpCollective\SymfonyDto\Validation\DtoConstraintBuilder;
+use Symfony\Component\Validator\Validation;
+
+$constraint = DtoConstraintBuilder::fromDto(new UserDto());
+$violations = Validation::createValidator()->validate($data, $constraint);
+```
+
+See [Usage docs](docs/README.md#validation-bridge) for details.
+
 ## Supported Config Formats
 
 The bundle supports multiple config file formats:
