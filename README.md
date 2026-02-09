@@ -142,7 +142,7 @@ $constraint = DtoConstraintBuilder::fromDto(new UserDto());
 $violations = Validation::createValidator()->validate($data, $constraint);
 ```
 
-See [Usage docs](docs/Usage.md#validation-bridge) for details.
+See [Usage docs](docs/README.md#validation-bridge) for details.
 
 ## Supported Config Formats
 
