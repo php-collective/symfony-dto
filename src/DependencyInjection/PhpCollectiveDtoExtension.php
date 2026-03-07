@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpCollective\SymfonyDto\DependencyInjection;
 
+use AutoMapper\AutoMapperInterface;
+use PhpCollective\SymfonyDto\AutoMapper\DtoAutoMapper;
+use PhpCollective\SymfonyDto\AutoMapper\DtoAutoMapperInterface;
 use PhpCollective\SymfonyDto\Command\GenerateDtoCommand;
 use PhpCollective\SymfonyDto\Command\InitDtoCommand;
 use PhpCollective\SymfonyDto\Command\JsonSchemaDtoCommand;
@@ -12,6 +15,7 @@ use PhpCollective\SymfonyDto\Http\DtoValueResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Reference;
 
 class PhpCollectiveDtoExtension extends Extension
 {
@@ -59,6 +63,14 @@ class PhpCollectiveDtoExtension extends Extension
             $resolverDefinition = new Definition(DtoValueResolver::class);
             $resolverDefinition->addTag('controller.argument_value_resolver', ['priority' => 50]);
             $container->setDefinition(DtoValueResolver::class, $resolverDefinition);
+        }
+
+        // Register AutoMapper bridge if available and enabled
+        if ($config['enable_automapper'] && interface_exists(AutoMapperInterface::class)) {
+            $autoMapperDefinition = new Definition(DtoAutoMapper::class);
+            $autoMapperDefinition->setArgument('$autoMapper', new Reference(AutoMapperInterface::class));
+            $container->setDefinition(DtoAutoMapper::class, $autoMapperDefinition);
+            $container->setAlias(DtoAutoMapperInterface::class, DtoAutoMapper::class);
         }
     }
 }
