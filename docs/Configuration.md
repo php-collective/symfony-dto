@@ -18,7 +18,7 @@ php_collective_dto:
 
 ### PHP Format (default)
 
-Create `config/dtos.php`.
+Create `config/dto.php`.
 This is the default format when running `bin/console dto:init`:
 
 ```php

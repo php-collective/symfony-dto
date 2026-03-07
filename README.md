@@ -43,7 +43,7 @@ php_collective_dto:
 bin/console dto:init
 ```
 
-This creates a `config/dtos.php` file with a sample DTO definition (PHP format is the default).
+This creates a `config/dto.php` file with a sample DTO definition (PHP format is the default).
 You can also use `--format=xml` or `--format=yaml`.
 
 The generated config looks like:
@@ -179,7 +179,7 @@ See [Usage docs](docs/README.md#validation-bridge) for details.
 
 The bundle supports multiple config file formats:
 
-- `dtos.php` - PHP format (default)
+- `dto.php` - PHP format (default)
 - `dto.xml` - XML format
 - `dto.yml` / `dto.yaml` - YAML format
 - `dto/` subdirectory with multiple files
