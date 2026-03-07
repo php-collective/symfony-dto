@@ -20,6 +20,7 @@ class ConfigurationTest extends TestCase
         $this->assertSame('config', $config['config_path']);
         $this->assertSame('src/Dto', $config['output_path']);
         $this->assertSame('App\\Dto', $config['namespace']);
+        $this->assertTrue($config['enable_automapper']);
     }
 
     public function testCustomConfiguration(): void
@@ -38,5 +39,19 @@ class ConfigurationTest extends TestCase
         $this->assertSame('custom/config', $config['config_path']);
         $this->assertSame('custom/output', $config['output_path']);
         $this->assertSame('Custom\\Namespace', $config['namespace']);
+    }
+
+    public function testAutoMapperCanBeDisabled(): void
+    {
+        $configuration = new Configuration();
+        $processor = new Processor();
+
+        $config = $processor->processConfiguration($configuration, [
+            'php_collective_dto' => [
+                'enable_automapper' => false,
+            ],
+        ]);
+
+        $this->assertFalse($config['enable_automapper']);
     }
 }

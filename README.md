@@ -33,6 +33,7 @@ php_collective_dto:
     typescript_output_path: assets/types  # TypeScript output
     jsonschema_output_path: config/schemas  # JSON Schema output
     enable_value_resolver: true  # Enable controller DTO auto-resolution
+    enable_automapper: true      # Enable AutoMapper bridge (requires jolicode/automapper)
 ```
 
 ## Usage
@@ -174,6 +175,37 @@ $violations = Validation::createValidator()->validate($data, $constraint);
 ```
 
 See [Usage docs](docs/README.md#validation-bridge) for details.
+
+## AutoMapper Bridge
+
+For automatic entity-to-DTO mapping without manual field assignment, install the optional AutoMapper integration:
+
+```bash
+composer require jolicode/automapper
+```
+
+Then use `DtoAutoMapperInterface` in your services:
+
+```php
+use PhpCollective\SymfonyDto\AutoMapper\DtoAutoMapperInterface;
+
+class UserController extends AbstractController
+{
+    public function __construct(
+        private DtoAutoMapperInterface $dtoMapper,
+    ) {}
+
+    #[Route('/users/{id}')]
+    public function show(User $user): JsonResponse
+    {
+        $dto = $this->dtoMapper->toDto($user, UserDto::class);
+
+        return $this->json($dto->toArray());
+    }
+}
+```
+
+See [Usage docs](docs/README.md#automapper-bridge) for full documentation including bidirectional mapping.
 
 ## Supported Config Formats
 
