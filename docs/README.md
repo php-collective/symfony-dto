@@ -307,6 +307,8 @@ For automatic object-to-DTO mapping without manual field-by-field code, install 
 composer require jolicode/automapper
 ```
 
+Supports AutoMapper 8.x (PHP 8.2+) and 10.x (PHP 8.4+).
+
 The bundle automatically registers the `DtoAutoMapper` service when AutoMapper is available.
 
 ### Entity to DTO
