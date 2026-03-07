@@ -66,9 +66,9 @@ class InitDtoCommandTest extends TestCase
         $commandTester->execute([]);
 
         $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
-        $this->assertFileExists($this->tempDir . '/config/dtos.php');
+        $this->assertFileExists($this->tempDir . '/config/dto.php');
 
-        $content = file_get_contents($this->tempDir . '/config/dtos.php');
+        $content = file_get_contents($this->tempDir . '/config/dto.php');
         $this->assertStringContainsString('return [', $content);
         $this->assertStringContainsString("'name' => 'User'", $content);
     }
@@ -111,7 +111,7 @@ class InitDtoCommandTest extends TestCase
 
     public function testInitFailsWhenFileExists(): void
     {
-        file_put_contents($this->tempDir . '/config/dtos.php', '<?php return [];');
+        file_put_contents($this->tempDir . '/config/dto.php', '<?php return [];');
 
         $command = new InitDtoCommand($this->tempDir, 'config');
 
@@ -127,7 +127,7 @@ class InitDtoCommandTest extends TestCase
 
     public function testInitOverwritesWithForce(): void
     {
-        file_put_contents($this->tempDir . '/config/dtos.php', '<?php return [];');
+        file_put_contents($this->tempDir . '/config/dto.php', '<?php return [];');
 
         $command = new InitDtoCommand($this->tempDir, 'config');
 
@@ -139,7 +139,7 @@ class InitDtoCommandTest extends TestCase
 
         $this->assertSame(Command::SUCCESS, $commandTester->getStatusCode());
 
-        $content = file_get_contents($this->tempDir . '/config/dtos.php');
+        $content = file_get_contents($this->tempDir . '/config/dto.php');
         $this->assertStringContainsString("'name' => 'User'", $content);
     }
 

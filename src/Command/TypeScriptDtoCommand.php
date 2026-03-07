@@ -78,7 +78,6 @@ class TypeScriptDtoCommand extends Command
             $io->error("No DTO configuration files found in: {$configPath}");
             $io->writeln('');
             $io->writeln('Expected one of:');
-            $io->writeln('  - dtos.php, dtos.xml, dtos.yml, dtos.yaml');
             $io->writeln('  - dto.php, dto.xml, dto.yml, dto.yaml');
             $io->writeln('  - dto/ subdirectory with config files');
             $io->writeln('');
@@ -158,18 +157,7 @@ class TypeScriptDtoCommand extends Command
     {
         $sep = str_ends_with($configPath, '/') ? '' : '/';
 
-        // Check for dtos.* files first (alternative naming)
-        if (file_exists($configPath . $sep . 'dtos.php')) {
-            return new PhpEngine();
-        }
-        if (file_exists($configPath . $sep . 'dtos.xml')) {
-            return new XmlEngine();
-        }
-        if (file_exists($configPath . $sep . 'dtos.yml') || file_exists($configPath . $sep . 'dtos.yaml')) {
-            return new YamlEngine();
-        }
-
-        // Standard dto.* naming
+        // Standard dto.* naming (preferred)
         if (file_exists($configPath . $sep . 'dto.php')) {
             return new PhpEngine();
         }
@@ -177,6 +165,17 @@ class TypeScriptDtoCommand extends Command
             return new XmlEngine();
         }
         if (file_exists($configPath . $sep . 'dto.yml') || file_exists($configPath . $sep . 'dto.yaml')) {
+            return new YamlEngine();
+        }
+
+        // Legacy dtos.* naming (backward compatibility)
+        if (file_exists($configPath . $sep . 'dtos.php')) {
+            return new PhpEngine();
+        }
+        if (file_exists($configPath . $sep . 'dtos.xml')) {
+            return new XmlEngine();
+        }
+        if (file_exists($configPath . $sep . 'dtos.yml') || file_exists($configPath . $sep . 'dtos.yaml')) {
             return new YamlEngine();
         }
 
