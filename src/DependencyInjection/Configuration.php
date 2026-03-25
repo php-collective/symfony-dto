@@ -39,6 +39,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultTrue()
                     ->info('Enable automatic DTO value resolver for controller arguments')
                 ->end()
+                ->booleanNode('enable_automapper')
+                    ->defaultTrue()
+                    ->info('Enable AutoMapper bridge when jolicode/automapper is installed')
+                ->end()
             ->end();
 
         return $treeBuilder;

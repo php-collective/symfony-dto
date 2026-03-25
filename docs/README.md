@@ -299,6 +299,124 @@ $order = new OrderDto([
 $customerName = $order->getCustomer()->getName();
 ```
 
+## AutoMapper Bridge
+
+For automatic object-to-DTO mapping without manual field-by-field code, install the optional [jolicode/automapper](https://automapper.jolicode.com/) integration:
+
+```bash
+composer require jolicode/automapper
+```
+
+Supports AutoMapper 8.x (PHP 8.2+) and 10.x (PHP 8.4+).
+
+The bundle automatically registers the `DtoAutoMapper` service when AutoMapper is available.
+
+### Entity to DTO
+
+```php
+use App\Dto\UserDto;
+use App\Entity\User;
+use PhpCollective\SymfonyDto\AutoMapper\DtoAutoMapperInterface;
+
+class UserController extends AbstractController
+{
+    public function __construct(
+        private DtoAutoMapperInterface $dtoMapper,
+    ) {}
+
+    #[Route('/users/{id}', methods: ['GET'])]
+    public function show(User $user): JsonResponse
+    {
+        // Automatic mapping - no manual field assignment
+        $dto = $this->dtoMapper->toDto($user, UserDto::class);
+
+        return $this->json($dto->toArray());
+    }
+
+    #[Route('/users', methods: ['GET'])]
+    public function index(UserRepository $repository): JsonResponse
+    {
+        $users = $repository->findAll();
+
+        // Map entire collection
+        $dtos = $this->dtoMapper->toDtoCollection($users, UserDto::class);
+
+        return $this->json(array_map(fn($dto) => $dto->toArray(), $dtos));
+    }
+}
+```
+
+### DTO to Entity (Updates)
+
+```php
+#[Route('/users/{id}', methods: ['PUT'])]
+public function update(
+    #[MapRequestDto] UserDto $dto,
+    User $user,
+    EntityManagerInterface $em,
+): JsonResponse {
+    // Update existing entity from DTO
+    $this->dtoMapper->fromDto($dto, $user);
+
+    $em->flush();
+
+    return $this->json($this->dtoMapper->toDto($user, UserDto::class)->toArray());
+}
+```
+
+### DTO to New Entity
+
+```php
+#[Route('/users', methods: ['POST'])]
+public function store(
+    #[MapRequestDto] UserDto $dto,
+    EntityManagerInterface $em,
+): JsonResponse {
+    // Create new entity from DTO
+    $user = $this->dtoMapper->fromDtoToNew($dto, User::class);
+
+    $em->persist($user);
+    $em->flush();
+
+    return $this->json(
+        $this->dtoMapper->toDto($user, UserDto::class)->toArray(),
+        201,
+    );
+}
+```
+
+### Mapping Context
+
+Pass additional context to control mapping behavior:
+
+```php
+$dto = $this->dtoMapper->toDto($user, UserDto::class, [
+    'groups' => ['read'],
+]);
+```
+
+### Configuration
+
+The AutoMapper bridge is enabled by default when the package is installed. To disable it:
+
+```yaml
+# config/packages/php_collective_dto.yaml
+php_collective_dto:
+    enable_automapper: false
+```
+
+### When to Use Each Approach
+
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| Array data (API request, DB row) | `DtoMapper::fromArray()` or `new UserDto($data)` |
+| Entity → DTO | `$dtoMapper->toDto($entity, UserDto::class)` |
+| DTO → existing Entity | `$dtoMapper->fromDto($dto, $entity)` |
+| DTO → new Entity | `$dtoMapper->fromDtoToNew($dto, User::class)` |
+| Multiple entities → DTOs | `$dtoMapper->toDtoCollection($entities, UserDto::class)` |
+
+The static `DtoMapper` class handles array-based hydration (the core strength of generated DTOs), while `DtoAutoMapper` handles object-to-object transformations using AutoMapper's code generation.
+
 ## Further Reading
 
 See the main [php-collective/dto documentation](https://github.com/php-collective/dto) for:
